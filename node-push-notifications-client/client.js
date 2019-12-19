@@ -2,7 +2,7 @@ const publicKey='BKgPEG-yxGjEwubcob9tfvgfOkqjJW9EPe60SDiaJNo_EudTYOMZGkjdVP9wzVU
 
 if('serviceWorker' in navigator){
 	send().catch(function(err){
-		console.log(err);
+		console.log('error');
 	});
 }
 
@@ -14,19 +14,26 @@ async function send()
 	});
     console.log('SW is registered...');
     console.log('Register Subscription...');
-	const subscription=register.pushManager.subscribe({
+
+	const subscription = await register.pushManager.subscribe({
 		userVisibleOnly:true,
 		applicationServerKey:urlBase64ToUint8Array(publicKey)
 	});
 	
+	//console.log(urlBase64ToUint8Array(publicKey));
+	//console.log(subscription);
+
     console.log('Push notification...');
-	fetch('/subscribe',{
+    console.log('Sending push');
+    console.log(JSON.stringify(subscription));
+	await fetch('/subscribe',{
 		method:'POST',
 		body:JSON.stringify(subscription),
 		headers:{
-			'content-type':'application/json'
+			'Content-Type':'application/json'
 		}
 	});
+	console.log('push sent');
 }
 
 function urlBase64ToUint8Array(base64String) {
